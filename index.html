@@ -1,51 +1,137 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///C:/Users/Administrator/Desktop/index.html -->
-<html lang="zh-CN">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>康文昌的在线HTML 教学小工具</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
     <style>
       body {
-        margin: 0;
+        width: 50%;
+        min-width: 400px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      .form input[type="number"] {
+        width: 200px;
+      }
+      .lastResult {
+        color: white;
+        padding: 3px;
       }
     </style>
   </head>
   <body>
-    <div style="background-color: #f1f1f1; text-align: center; padding: 40px">
-      <img
-        src="https://i0.imgs.ovh/2024/02/02/bh6CW.jpeg"
-        alt="图像"
-        height="80"
-        width="80"
-      />
-    </div>
-    <div
-      style="
-        max-width: 700px;
-        margin: 30px auto;
-        padding: 15px;
-        line-height: 1.7;
-      "
-    >
-      <p>人闲桂花落，夜静春山空</p>
-      <p>饮三杯酒休胡乱，得一帆风便可收</p>
-      <p>物不求馀随处足，事如能省即心清</p>
-      <p>人生得丧何须计？一任浮云过眼来</p>
-      <div
-        style="
-          background-color: #f1f1f1;
-          text-align: center;
-          padding: 40px;
-          font-size: 12px;
-        "
-      >
-        <p>我的网站</p>
-        <a href="file:///C:/Users/Administrator/Desktop/code1/index%20(4).html"
-          >友情链接</a
-        >
+    <div>
+      <h1>猜数字游戏</h1>
+      <p>
+        我们在1到100之间选择了一个随机数。看看你能否在10圈或更少的时间内猜出答案。我们会告诉你你的猜测是过高还是过低。
+      </p>
+      <div class="form">
+        <!-- <label>标签用于关联表单控件和标签文本，提高可访问性，并允许自定义样式和布局。使用<label>标签时，应确保与for属性结合使用，为每个表单元素提供唯一的id和相应的for属性。 -->
+        <label for="guessField">猜一猜</label>
+        <input
+          type="number"
+          min="1"
+          max="100"
+          id="guessField"
+          class="guessField"
+        />
+        <input type="submit" value="Submit guess" class="guessSubmit" />
+      </div>
+      <!-- resultParas:结果段落 -->
+      <div class="resultParas">
+        <p class="guesses"></p>
+        <p class="lastResult"></p>
+        <p class="lowOrHi"></p>
       </div>
     </div>
+
+    <script>
+      //guessField：猜测字段 guessSubmit：猜测提交  lastResult：上一页结果  resultButton：结果按钮
+
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+      const guessField = document.querySelector(".guessField");
+      const guessSubmit = document.querySelector(".guessSubmit");
+      const guesses = document.querySelector(".guesses");
+      const lastResult = document.querySelector(".lastResult");
+      const lowOrHi = document.querySelector(".lowOrHi");
+      //   guessCount：猜测计数   resultButton:结果按钮
+      let guessCount = 1;
+      let resultButton;
+
+      //  checkGuess：检测猜测  textContent：文本内容  userGuess：用户猜测
+      function checkGuess() {
+        const userGuess = Number(guessField.value);
+        if (guessCount === 1) {
+          guesses.textContent = "先前的猜:";
+        }
+        guesses.textContent += userGuess + " ";
+
+        if (userGuess === randomNumber) {
+          lastResult.textContent = "恭喜你答对了";
+          lastResult.style.backgroundColor = "green";
+          lowOrHi.textContent = "";
+          setGameOver();
+        } else if (guessCount === 10) {
+          lastResult.textContent = "游戏结束";
+          lowOrHi.textContent = "";
+          setGameOver();
+        } else {
+          lastResult.textContent = "抱歉，你答错了";
+          lastResult.style.backgroundColor = "red";
+
+          if (userGuess > randomNumber) {
+            lowOrHi.textContent = "你猜的太高了";
+          } else if (userGuess < randomNumber) {
+            lowOrHi.textContent = "你猜的太低了";
+          }
+        }
+        guessCount++;
+        guessField.value = "";
+        //   当通过鼠标点击选中元素或通过 tab 键定位到元素时，该元素就会获得焦点。
+        //   focus() 方法触发 focus 事件，或规定当发生 focus 事件时运行的函数。
+        // focus() 方法用于为元素设置焦点（如果可以设置）当元素获得焦点时，发生 focus 事件。
+        guessField.focus();
+      }
+
+      guessSubmit.addEventListener("click", checkGuess);
+      // 当布尔属性 disabled 存在时，元素将不可变、不能聚焦或与表单一同提交。用户将不能在表单控件本身或其子控件进行编辑或聚焦操作。
+      function setGameOver() {
+        guessField.disabled = true;
+        guessSubmit.disabled = true;
+        // 在 HTML 文档中，Document.createElement() 方法用于创建一个由标签名称 tagName 指定的 HTML 元素。如果用户代理无法识别 tagName，则会生成一个未知 HTML 元素
+        resetButton = document.createElement("button");
+        resetButton.textContent = "开始新的游戏";
+        //  接口的 append() 方法会添加一个新值到 FormData 对象内的一个已存在的键中，如果键不存在则会添加该键。
+        //  FormData.set 和 append() 的区别在于，如果指定的键已经存在， FormData.set 会使用新值覆盖已有的值，而 append() 会把新值添加到已有值集合的后面。
+        document.body.append(resetButton);
+        resetButton.addEventListener("click", resetGame);
+      }
+
+      function resetGame() {
+        guessCount = 1;
+        // querySelectorAll:查询选择器全部  resetParas重置段落
+        const resetParas = document.querySelectorAll(".resultParas p");
+        //for...of 循环为你提供了一种获取数组中的每一个元素的方法，并在元素的基础上运行 JavaScript 代码。for (const fruit of fruits) 这一行的意思是：
+        // 1.获取 fruits 中的第一个元素。
+        // 2.将 fruit 变量设置为这个元素，然后运行花括号 {} 间的代码。
+        // 3.获取 fruits 中的下一个元素，然后重复步骤 2，直至到达 fruits 的末尾
+        for (const resetPara of resetParas) {
+          resetPara.textContent = "";
+        }
+
+        // parentNode 属性可返回某节点的父节点。 removeChild() 方法可从子节点列表中删除某个节点。
+        resetButton.parentNode.removeChild(resetButton);
+        guessField.disabled = false;
+        guessSubmit.disabled = false;
+        guesses.value = "";
+        guesses.focus();
+        lastResult.style.backgroundColor = "white";
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+      }
+    </script>
   </body>
 </html>
